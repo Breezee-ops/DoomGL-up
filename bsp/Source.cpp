@@ -138,11 +138,6 @@ int main() {
     glDeleteShader(vertexshader);
     glDeleteShader(fragshader);
 
-    float points[8] = { 0,0,0,0,0,0,0,0 };
-    unsigned int indices[] = {
-        0, 1, 2,
-        1, 2, 3
-    };
     sectors walls[2];
 
     unsigned int VBO, VAO, EBO;
@@ -152,10 +147,10 @@ int main() {
 
     glBindVertexArray(VAO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(points), points, GL_STREAM_DRAW); 
+    glBufferData(GL_ARRAY_BUFFER, 0, nullptr, GL_STREAM_DRAW); 
     
     glBindBuffer(GL_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STREAM_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 0, nullptr, GL_STREAM_DRAW);
 
     int tick = 0;
     int time = 0;
