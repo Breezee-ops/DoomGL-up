@@ -9,7 +9,7 @@
 class engine
 {
 public:
-	void descriptRender(float* points, unsigned int* indices, unsigned int VAO, unsigned int VBO, unsigned int EBO, unsigned int shaderProgram);
-	void render(sectors* walls, int size, player player, trig math, float* points, unsigned* indices, unsigned VAO, unsigned VBO, unsigned EBO, unsigned shaderProgram);
+	void descriptRender(std::vector<float> points, std::vector<unsigned> indices, unsigned int VAO, unsigned int VBO, unsigned int EBO, unsigned int shaderProgram);
+	void render(sectors* walls, int size, player player, trig math, unsigned VAO, unsigned VBO, unsigned EBO, unsigned shaderProgram);
 	void keyboardHandle(player& p, trig m, GLFWwindow* window);
 };

@@ -1,28 +1,29 @@
 #include "engine.h"
 
-void engine::descriptRender(float* points, unsigned int* indices, unsigned int VAO, unsigned int VBO, unsigned int EBO, unsigned int shaderProgram) {
+void engine::descriptRender(std::vector<float>points, std::vector<unsigned> indices, unsigned int VAO, unsigned int VBO, unsigned int EBO, unsigned int shaderProgram) {
     glUseProgram(shaderProgram);
 
     glBindVertexArray(VAO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(float) * 8, points);
+    glBufferData(GL_ARRAY_BUFFER, points.size() * sizeof(float), points.data(), GL_STREAM_DRAW);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * 6, indices, GL_STREAM_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(float), indices.data(), GL_STREAM_DRAW);
 
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(unsigned), (void*)0);
     glEnableVertexAttribArray(0);
 
     glEnable(GL_PROGRAM_POINT_SIZE);
     glPointSize(10.0f);
 
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, (void*)0);
 
     glBindVertexArray(0);
     glUseProgram(0);
+    std::cout << points.size() << std::endl;
 }
 
-void engine::render(sectors* walls, int size, player player, trig math, float* points, unsigned* indices, unsigned VAO, unsigned VBO, unsigned EBO, unsigned shaderProgram) {
+void engine::render(sectors* walls, int size, player player, trig math, unsigned VAO, unsigned VBO, unsigned EBO, unsigned shaderProgram) {
     float wx[4];
     float wy[4];
     float wz[4];
@@ -30,6 +31,9 @@ void engine::render(sectors* walls, int size, player player, trig math, float* p
     int SH2 = 300;
     float ps = math.SIN[player.a];
     float pc = math.COS[player.a];
+
+    std::vector<float> points;
+    std::vector<unsigned> indices;
     // placed offset point
     for (int i = 0; i < size; i++) {
         int x1 = walls[i].x1 - player.x;
@@ -49,18 +53,29 @@ void engine::render(sectors* walls, int size, player player, trig math, float* p
 
         // transform into screen coordinates
         if (wy[0] > 0 && wy[1] > 0) {
-            points[0] = 2*wx[0] / (wy[0]);
-            points[1] = 2*wz[0] / (wy[0]);
-            points[2] = 2*wx[1] / (wy[1]);
-            points[3] = 2*wz[1] / (wy[1]);
-            points[4] = 2*wx[0] / (wy[0]);
-            points[5] = 2*wz[2] / wy[0];
-            points[6] = 2*wx[1] / (wy[1]);
-            points[7] = 2*wz[3] / wy[1];
+            points.push_back(wx[0] / (wy[0]));
+            points.push_back(wz[0] / (wy[0]));
+            points.push_back(wx[1] / (wy[1]));
+            points.push_back(wz[1] / (wy[1]));
+            points.push_back(wx[0] / (wy[0]));
+            points.push_back(wz[2] / (wy[0]));
+            points.push_back(wx[1] / (wy[1]));
+            points.push_back(wz[3] / (wy[1]));
         }
-        std::cout << wz[2] << std::endl;
-        descriptRender(points, indices, VAO, VBO, EBO, shaderProgram);
     }
+
+    int quadcount = points.size() / 4;
+    int base = 0;
+    for (int j = 0; j < quadcount; j++) {
+        indices.push_back(0 + base);
+        indices.push_back(1 + base);
+        indices.push_back(2 + base);
+        indices.push_back(1 + base);
+        indices.push_back(2 + base);
+        indices.push_back(3 + base);
+        base += 4;
+    }
+    if (!points.empty()) descriptRender(points, indices, VAO, VBO, EBO, shaderProgram);
 }
 
 void engine::keyboardHandle(player& p, trig m, GLFWwindow* window) {

@@ -171,7 +171,7 @@ int main() {
 
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
-        eng.render(walls, 2, p, m, points, indices, VAO, VBO, EBO, shaderProgram);
+        eng.render(walls, 2, p, m, VAO, VBO, EBO, shaderProgram);
 
         //std::cout << points[0] << std::endl;
         //std::cout << std::endl;
@@ -179,7 +179,7 @@ int main() {
         glfwPollEvents();
         tick += 1;
         if (time - curtime == 1) {
-            std::cout << tick << std::endl;
+            //std::cout << tick << std::endl;
             tick = 0;
         }
         curtime = time;
