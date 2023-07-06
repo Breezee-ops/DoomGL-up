@@ -30,17 +30,25 @@ player p;
 trig m;
 
 const char* vertexshadersource = "#version 330 core\n"
-"layout (location = 0) in vec2 aPos;\n"
+"layout (location = 0) in vec3 aPos;\n"
+"out vec3 col;\n"
 "void main()\n"
 "{\n"
+"   col = aPos;\n"
 "   gl_Position = vec4(aPos.x, aPos.y, 0.0, 1.0);\n"
 "}\0";
 
 const char* fragmentshadersource = "#version 330 core\n"
+"in vec3 col;\n"
 "out vec4 FragColor;\n"
 "void main()\n"
 "{\n"
-"   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+"if(col.z == 0) {\n"
+"   FragColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);\n"
+"}\n"
+"if(col.z == 1) {\n"
+"   FragColor = vec4(0.0f, 1.0f, 0.2f, 1.0f);\n"
+"}\n"
 "}\n\0";
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
@@ -51,7 +59,7 @@ engine eng;
 
 // init func
 
-void init(sectors *walls) {
+void init(Walls *walls) {
     p = { 0, 0, 20, 0, 0 };
     for (int x = 0; x < 360; x++) {
         m.COS[x] = cos(x / 180.0 * 3.1415);
@@ -63,6 +71,7 @@ void init(sectors *walls) {
 
     walls[0].x2 = 70;
     walls[0].y2 = 10;
+    walls[0].col = 0;
 
     walls[1].x1 = 70;
     walls[1].y1 = 10;
@@ -70,6 +79,7 @@ void init(sectors *walls) {
 
     walls[1].x2 = 70;
     walls[1].y2 = 40;
+    walls[1].col = 1;
 }
 
 int main() {
@@ -138,7 +148,7 @@ int main() {
     glDeleteShader(vertexshader);
     glDeleteShader(fragshader);
 
-    sectors walls[2];
+    Walls walls[2];
 
     unsigned int VBO, VAO, EBO;
     glGenBuffers(1, &EBO);

@@ -10,7 +10,7 @@ void engine::descriptRender(std::vector<float>points, std::vector<unsigned> indi
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(float), indices.data(), GL_STREAM_DRAW);
 
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(unsigned), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(unsigned), (void*)0);
     glEnableVertexAttribArray(0);
 
     glEnable(GL_PROGRAM_POINT_SIZE);
@@ -23,7 +23,7 @@ void engine::descriptRender(std::vector<float>points, std::vector<unsigned> indi
     std::cout << points.size() << std::endl;
 }
 
-void engine::render(sectors* walls, int size, player player, trig math, unsigned VAO, unsigned VBO, unsigned EBO, unsigned shaderProgram) {
+void engine::render(Walls* walls, int size, player player, trig math, unsigned VAO, unsigned VBO, unsigned EBO, unsigned shaderProgram) {
     float wx[4];
     float wy[4];
     float wz[4];
@@ -55,12 +55,16 @@ void engine::render(sectors* walls, int size, player player, trig math, unsigned
         if (wy[0] > 0 && wy[1] > 0) {
             points.push_back(wx[0] / (wy[0]));
             points.push_back(wz[0] / (wy[0]));
+            points.push_back(walls[i].col);
             points.push_back(wx[1] / (wy[1]));
             points.push_back(wz[1] / (wy[1]));
+            points.push_back(walls[i].col);
             points.push_back(wx[0] / (wy[0]));
             points.push_back(wz[2] / (wy[0]));
+            points.push_back(walls[i].col);
             points.push_back(wx[1] / (wy[1]));
             points.push_back(wz[3] / (wy[1]));
+            points.push_back(walls[i].col);
         }
     }
 
