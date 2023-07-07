@@ -196,3 +196,28 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     // height will be significantly larger than specified on retina displays.
     glViewport(0, 0, width, height);
 }
+
+
+
+int pointdep(int x1, int x2, int y1, int y2) {
+    // calculates depth of middle point to player (origin)
+    int midx = (x1 + x2) / 2;
+    int midy = (y1 + y2) / 2;
+
+    return dist(0, 0, midx, midy);
+}
+
+void bubblesort(Walls* wallsin, int size) {
+    int i, j;
+    bool swapped;
+    for (i = 0; i < size - 1; i++) {
+        swapped = false;
+        for (j = 0; j < size - i - 1; j++) {
+            if (wallsin[j].z > wallsin[j + 1].z) {
+                std::swap(wallsin[j], wallsin[j+1]);
+                swapped = true;
+            }
+        }
+        if (swapped == false) break;
+    }
+}

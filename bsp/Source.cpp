@@ -28,6 +28,8 @@ const int SH2 = 300;
 
 player p;
 trig m;
+Walls walls[2];
+sectors s[1];
 
 const char* vertexshadersource = "#version 330 core\n"
 "layout (location = 0) in vec3 aPos;\n"
@@ -59,7 +61,7 @@ engine eng;
 
 // init func
 
-void init(Walls *walls) {
+void init(Walls *walls, sectors* s) {
     p = { 0, 0, 20, 0, 0 };
     for (int x = 0; x < 360; x++) {
         m.COS[x] = cos(x / 180.0 * 3.1415);
@@ -148,7 +150,7 @@ int main() {
     glDeleteShader(vertexshader);
     glDeleteShader(fragshader);
 
-    Walls walls[2];
+    
 
     unsigned int VBO, VAO, EBO;
     glGenBuffers(1, &EBO);
@@ -166,7 +168,7 @@ int main() {
     int time = 0;
     int curtime = 0;
     
-    init(walls);
+    init(walls, s);
     // render loop
 
     while (!glfwWindowShouldClose(window)) {

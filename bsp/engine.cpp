@@ -23,6 +23,29 @@ void engine::descriptRender(std::vector<float>points, std::vector<unsigned> indi
     std::cout << points.size() << std::endl;
 }
 
+int pointdep(int x1, int x2, int y1, int y2) {
+    // calculates depth of middle point to player (origin)
+    int midx = (x1 + x2) / 2;
+    int midy = (y1 + y2) / 2;
+
+    return (midx * midx) + (midy * midy);
+}
+
+void bubblesort(Walls* wallsin, int size) {
+    int i, j;
+    bool swapped;
+    for (i = 0; i < size - 1; i++) {
+        swapped = false;
+        for (j = 0; j < size - i - 1; j++) {
+            if (wallsin[j].zdep < wallsin[j + 1].zdep) {
+                std::swap(wallsin[j], wallsin[j + 1]);
+                swapped = true;
+            }
+        }
+        if (swapped == false) break;
+    }
+}
+
 void engine::render(Walls* walls, int size, player player, trig math, unsigned VAO, unsigned VBO, unsigned EBO, unsigned shaderProgram) {
     float wx[4];
     float wy[4];
@@ -34,11 +57,15 @@ void engine::render(Walls* walls, int size, player player, trig math, unsigned V
 
     std::vector<float> points;
     std::vector<unsigned> indices;
+    std::vector<int> x1, y1, x2, y2;
+    for (int k = 0; k < size; k++) {
+        walls[k].zdep = pointdep(walls[k].x1 - player.x, walls[k].x2 - player.x, walls[k].y1 - player.y, walls[k].y2 - player.y);
+    }
+    bubblesort(walls, size);
     // placed offset point
     for (int i = 0; i < size; i++) {
         int x1 = walls[i].x1 - player.x;
         int y1 = walls[i].y1 - player.y;
-
         int x2 = walls[i].x2 - player.x;
         int y2 = walls[i].y2 - player.y;
         // rotation using rotate matrix
