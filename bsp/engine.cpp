@@ -110,6 +110,9 @@ void engine::render(Walls* walls, int size, player player, trig math, unsigned V
 }
 
 void engine::keyboardHandle(player& p, trig m, GLFWwindow* window) {
+    int comp = 90 - p.a;
+    if (comp < 0) comp += 360;
+    if (comp > 359) comp -= 360;
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
         p.a -= 4;
         if (p.a < 0) p.a += 360;
@@ -125,6 +128,14 @@ void engine::keyboardHandle(player& p, trig m, GLFWwindow* window) {
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
         p.x -= 3 * m.SIN[p.a];
         p.y -= 3 * m.COS[p.a];
+    }
+    if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS) {
+        p.x -= 3 * m.SIN[comp];
+        p.y += 3 * m.COS[comp];
+    }
+    if (glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS) {
+        p.x += 3 * m.SIN[comp];
+        p.y -= 3 * m.COS[comp];
     }
     // looking
     if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) p.l += 1;

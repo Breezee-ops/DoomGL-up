@@ -28,7 +28,7 @@ const int SH2 = 300;
 
 player p;
 trig m;
-Walls walls[2];
+Walls walls[4];
 sectors s[1];
 
 const char* vertexshadersource = "#version 330 core\n"
@@ -61,7 +61,7 @@ engine eng;
 
 // init func
 
-void init(Walls *walls, sectors* s) {
+void init() {
     p = { 0, 0, 20, 0, 0 };
     for (int x = 0; x < 360; x++) {
         m.COS[x] = cos(x / 180.0 * 3.1415);
@@ -75,6 +75,7 @@ void init(Walls *walls, sectors* s) {
     walls[0].y2 = 10;
     walls[0].col = 0;
 
+
     walls[1].x1 = 70;
     walls[1].y1 = 10;
     walls[1].z = 40;
@@ -82,6 +83,24 @@ void init(Walls *walls, sectors* s) {
     walls[1].x2 = 70;
     walls[1].y2 = 40;
     walls[1].col = 1;
+
+
+    walls[2].x1 = 70;
+    walls[2].y1 = 40;
+    walls[2].z = 40;
+
+    walls[2].x2 = 30;
+    walls[2].y2 = 40;
+    walls[2].col = 0;
+
+
+    walls[3].x1 = 30;
+    walls[3].y1 = 10;
+    walls[3].z = 40;
+
+    walls[3].x2 = 30;
+    walls[3].y2 = 40;
+    walls[3].col = 1;
 }
 
 int main() {
@@ -168,7 +187,7 @@ int main() {
     int time = 0;
     int curtime = 0;
     
-    init(walls, s);
+    init();
     // render loop
 
     while (!glfwWindowShouldClose(window)) {
@@ -178,7 +197,7 @@ int main() {
 
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
-        eng.render(walls, 2, p, m, VAO, VBO, EBO, shaderProgram);
+        eng.render(walls, 4, p, m, VAO, VBO, EBO, shaderProgram);
 
         //std::cout << points[0] << std::endl;
         //std::cout << std::endl;
