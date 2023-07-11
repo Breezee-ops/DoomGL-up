@@ -20,7 +20,7 @@ void engine::descriptRender(std::vector<float>points, std::vector<unsigned> indi
 
     glBindVertexArray(0);
     glUseProgram(0);
-    std::cout << points.size() << std::endl;
+    //std::cout << points.size() << std::endl;
 }
 
 int pointdep(int x1, int x2, int y1, int y2) {
@@ -31,12 +31,12 @@ int pointdep(int x1, int x2, int y1, int y2) {
     return (midx * midx) + (midy * midy);
 }
 
-void bubblesort(Walls* wallsin, int size) {
+void bubblesort(Walls* wallsin, int size, int start, int end) {
     int i, j;
     bool swapped;
-    for (i = 0; i < size - 1; i++) {
+    for (i = start; i < end; i++) {
         swapped = false;
-        for (j = 0; j < size - i - 1; j++) {
+        for (j = start; j < end; j++) {
             if (wallsin[j].zdep < wallsin[j + 1].zdep) {
                 std::swap(wallsin[j], wallsin[j + 1]);
                 swapped = true;
@@ -46,7 +46,22 @@ void bubblesort(Walls* wallsin, int size) {
     }
 }
 
-void engine::render(Walls* walls, int size, player player, trig math, unsigned VAO, unsigned VBO, unsigned EBO, unsigned shaderProgram) {
+void Secbubblesort(sectors* s, int size) {
+    int i, j;
+    bool swapped;
+    for (i = 0; i < size; i++) {
+        swapped = false;
+        for (j = 0; j < size; j++) {
+            if (s[j].d < s[j + 1].d) {
+                std::swap(s[j], s[j + 1]);
+                swapped = true;
+            }
+        }
+        if (swapped == false) break;
+    }
+}
+
+void engine::render(sectors* s, int Ssize, Walls* walls, player player, trig math, unsigned VAO, unsigned VBO, unsigned EBO, unsigned shaderProgram) {
     float wx[4];
     float wy[4];
     float wz[4];
@@ -54,48 +69,58 @@ void engine::render(Walls* walls, int size, player player, trig math, unsigned V
     int SH2 = 300;
     float ps = math.SIN[player.a];
     float pc = math.COS[player.a];
-
     std::vector<float> points;
     std::vector<unsigned> indices;
-    std::vector<int> x1, y1, x2, y2;
-    for (int k = 0; k < size; k++) {
-        walls[k].zdep = pointdep(walls[k].x1 - player.x, walls[k].x2 - player.x, walls[k].y1 - player.y, walls[k].y2 - player.y);
+    for (int sec = 0; sec < Ssize; sec++) {
+        s[sec].d = (s[sec].x - player.x) * (s[sec].x - player.x) + (s[sec].y - player.y) * (s[sec].y - player.y);
     }
-    bubblesort(walls, size);
-    // placed offset point
-    for (int i = 0; i < size; i++) {
-        int x1 = walls[i].x1 - player.x;
-        int y1 = walls[i].y1 - player.y;
-        int x2 = walls[i].x2 - player.x;
-        int y2 = walls[i].y2 - player.y;
-        // rotation using rotate matrix
-        wx[0] = x1 * pc - y1 * ps;
-        wy[0] = y1 * pc + x1 * ps;
-        wz[0] = 0 - player.z;
-        wz[2] = walls[i].z - player.z;
-        wx[1] = x2 * pc - y2 * ps;
-        wy[1] = y2 * pc + x2 * ps;
-        wz[1] = 0 - player.z;
-        wz[3] = walls[i].z - player.z;
-
-        // transform into screen coordinates
-        if (wy[0] > 0 && wy[1] > 0) {
-            points.push_back(wx[0] / (wy[0]));
-            points.push_back(wz[0] / (wy[0]));
-            points.push_back(walls[i].col);
-            points.push_back(wx[1] / (wy[1]));
-            points.push_back(wz[1] / (wy[1]));
-            points.push_back(walls[i].col);
-            points.push_back(wx[0] / (wy[0]));
-            points.push_back(wz[2] / (wy[0]));
-            points.push_back(walls[i].col);
-            points.push_back(wx[1] / (wy[1]));
-            points.push_back(wz[3] / (wy[1]));
-            points.push_back(walls[i].col);
+    Secbubblesort(s, Ssize);
+    for (int l = 0; l < Ssize; l++) {
+        int size = s[l].we - s[l].ws + 1;
+        for (int k = s[l].ws; k <= s[l].we; k++) {
+            walls[k].zdep = pointdep(walls[k].x1 - player.x, walls[k].x2 - player.x, walls[k].y1 - player.y, walls[k].y2 - player.y);
         }
-    }
+        bubblesort(walls, size, s[l].ws, s[l].we);
+        // placed offset point
+        for (int i = s[l].ws; i <=s[l].we; i++) {
+            int x1 = walls[i].x1 - player.x;
+            int y1 = walls[i].y1 - player.y;
+            int x2 = walls[i].x2 - player.x;
+            int y2 = walls[i].y2 - player.y;
+            // rotation using rotate matrix
+            wx[0] = x1 * pc - y1 * ps;
+            wy[0] = y1 * pc + x1 * ps;
+            /* for look think about it in terms of the player rotating as they look down
+            * so as they're looking down, the point that they were looking at gets pushed up in their vision
+            * the offset for that is the depth to the player (wy)
+            */
+            wz[0] = s[l].zfloor - player.z + (player.l * wy[0]/32); // subtract to offset basically convert z to world coords as well
+            wz[2] = s[l].zheight - player.z + (player.l * wy[0]/32); // multiply look by wy to basically proportionally push wy further away
+            wx[1] = x2 * pc - y2 * ps;
+            wy[1] = y2 * pc + x2 * ps;
+            wz[1] = s[l].zfloor - player.z + (player.l * wy[1]/32);
+            wz[3] = s[l].zheight - player.z + (player.l * wy[1]/32);
 
-    int quadcount = points.size() / 4;
+            // transform into screen coordinates
+            if (wy[0] > 0 && wy[1] > 0) {
+                points.push_back(wx[0] / (wy[0]));
+                points.push_back(wz[0] / (wy[0]));
+                points.push_back(walls[i].col);
+                points.push_back(wx[1] / (wy[1]));
+                points.push_back(wz[1] / (wy[1]));
+                points.push_back(walls[i].col);
+                points.push_back(wx[0] / (wy[0]));
+                points.push_back(wz[2] / (wy[0]));
+                points.push_back(walls[i].col);
+                points.push_back(wx[1] / (wy[1]));
+                points.push_back(wz[3] / (wy[1]));
+                points.push_back(walls[i].col);
+            }
+        }
+
+    }
+    int quadcount = points.size() / (3 * 4);
+    std::cout << points.size()<<std::endl;
     int base = 0;
     for (int j = 0; j < quadcount; j++) {
         indices.push_back(0 + base);
@@ -138,6 +163,10 @@ void engine::keyboardHandle(player& p, trig m, GLFWwindow* window) {
         p.y -= 3 * m.COS[comp];
     }
     // looking
-    if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) p.l += 1;
-    if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) p.l -= 1;
+    if (glfwGetKey(window, GLFW_KEY_U) == GLFW_PRESS) p.l += 1;
+    if (glfwGetKey(window, GLFW_KEY_J) == GLFW_PRESS) p.l -= 1;
+
+    // height
+    if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) p.z += 1;
+    if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) p.z -= 1;
 }

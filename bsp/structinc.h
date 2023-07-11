@@ -10,7 +10,7 @@ typedef struct {
 }trig;
 
 typedef struct {
-    int x1, x2, y1, y2, z;
+    int x1, x2, y1, y2;
     int zdep;
     int col;
 }Walls;

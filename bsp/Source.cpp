@@ -28,8 +28,8 @@ const int SH2 = 300;
 
 player p;
 trig m;
-Walls walls[4];
-sectors s[1];
+Walls walls[8];
+sectors s[2];
 
 const char* vertexshadersource = "#version 330 core\n"
 "layout (location = 0) in vec3 aPos;\n"
@@ -67,40 +67,51 @@ void init() {
         m.COS[x] = cos(x / 180.0 * 3.1415);
         m.SIN[x] = sin(x / 180.0 * 3.1415);
     }
-    walls[0].x1 = 30;
-    walls[0].y1 = 10;
-    walls[0].z = 40;
 
-    walls[0].x2 = 70;
-    walls[0].y2 = 10;
-    walls[0].col = 0;
+    int loadSec[] = {
+        //we ws zfloor zheight x y d
+         3, 0, 0, 40, 50, 25, 0,
+         7, 4, 0, 40, 120, 30, 0
+    };
 
+    int loadWall[] = {
+        //x1, y1, x2, y2, col
+        30, 10, 70, 10, 0,
+        70, 10, 70, 40, 1,
+        70, 40, 30, 40, 0,
+        30, 10, 30, 40, 1,
 
-    walls[1].x1 = 70;
-    walls[1].y1 = 10;
-    walls[1].z = 40;
+        110, 20, 130, 20, 0,
+        130, 20, 130, 40, 1,
+        130, 40, 110, 40, 0,
+        110, 40, 110, 20, 1
+    };
 
-    walls[1].x2 = 70;
-    walls[1].y2 = 40;
-    walls[1].col = 1;
-
-
-    walls[2].x1 = 70;
-    walls[2].y1 = 40;
-    walls[2].z = 40;
-
-    walls[2].x2 = 30;
-    walls[2].y2 = 40;
-    walls[2].col = 0;
-
-
-    walls[3].x1 = 30;
-    walls[3].y1 = 10;
-    walls[3].z = 40;
-
-    walls[3].x2 = 30;
-    walls[3].y2 = 40;
-    walls[3].col = 1;
+    // load from sec array
+    int elem = 0;
+    int numsec = sizeof(loadSec) / (sizeof(int) * 7);
+    std::cout << "sec: " << numsec << std::endl;
+    for (int sec = 0; sec < numsec; sec++) {
+        s[sec].we = loadSec[elem + 0];
+        s[sec].ws = loadSec[elem + 1];
+        s[sec].zfloor = loadSec[elem + 2];
+        s[sec].zheight = loadSec[elem + 3];
+        s[sec].x = loadSec[elem + 4];
+        s[sec].y = loadSec[elem + 5];
+        s[sec].d = loadSec[elem + 6];
+        elem += 7;
+    }
+    elem = 0;
+    int numwall = sizeof(loadWall) / (sizeof(int) * 5);
+    std::cout << "wall: " << numwall << std::endl;
+    for (int wal = 0; wal < numwall; wal++) {
+        walls[wal].x1 = loadWall[elem + 0];
+        walls[wal].y1 = loadWall[elem + 1];
+        walls[wal].x2 = loadWall[elem + 2];
+        walls[wal].y2 = loadWall[elem + 3];
+        walls[wal].col = loadWall[elem + 4];
+        elem += 5;
+    }
 }
 
 int main() {
@@ -197,7 +208,8 @@ int main() {
 
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
-        eng.render(walls, 4, p, m, VAO, VBO, EBO, shaderProgram);
+
+        eng.render(s, 2, walls, p, m, VAO, VBO, EBO, shaderProgram);
 
         //std::cout << points[0] << std::endl;
         //std::cout << std::endl;
