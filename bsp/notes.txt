@@ -221,3 +221,9 @@ void bubblesort(Walls* wallsin, int size) {
         if (swapped == false) break;
     }
 }
+
+move to vector based implementation.
+
+convert lines into parametric form first check if both points to left then line behind
+if both lines to right line infront
+if one left one right then go into intersection mode and use parametric form to find intersections and solve
