@@ -31,13 +31,13 @@ int pointdep(int x1, int x2, int y1, int y2) {
     return (midx * midx) + (midy * midy);
 }
 
-void bubblesort(Walls* wallsin, int size, int start, int end) {
+void bubblesort(std::vector<Walls>& wallsin, player player) {
     int i, j;
     bool swapped;
-    for (i = start; i < end; i++) {
+    for (i = 0; i < wallsin.size()-1; i++) {
         swapped = false;
-        for (j = start; j < end; j++) {
-            if (wallsin[j].zdep < wallsin[j + 1].zdep) {
+        for (j = 0; j < wallsin.size()-i-1; j++) {
+            if ((((wallsin[j].p2.first - wallsin[j].p1.first / 2) - player.x) * ((wallsin[j].p2.first - wallsin[j].p1.first / 2) - player.x)) + (((wallsin[j].p2.second - wallsin[j].p1.second / 2) - player.y) * ((wallsin[j].p2.second - wallsin[j].p1.second / 2) - player.y)) < (((wallsin[j+1].p2.first - wallsin[j+1].p1.first / 2) - player.x) * ((wallsin[j+1].p2.first - wallsin[j+1].p1.first / 2) - player.x)) + (((wallsin[j+1].p2.second - wallsin[j+1].p1.second / 2) - player.y) * ((wallsin[j+1].p2.second - wallsin[j+1].p1.second / 2) - player.y))) {
                 std::swap(wallsin[j], wallsin[j + 1]);
                 swapped = true;
             }
@@ -71,6 +71,7 @@ void engine::render(sectors* s, int Ssize, Walls* walls, player player, trig mat
     float pc = math.COS[player.a];
     std::vector<float> points;
     std::vector<unsigned> indices;
+<<<<<<< Updated upstream
     for (int sec = 0; sec < Ssize; sec++) {
         s[sec].d = (s[sec].x - player.x) * (s[sec].x - player.x) + (s[sec].y - player.y) * (s[sec].y - player.y);
     }
@@ -79,6 +80,54 @@ void engine::render(sectors* s, int Ssize, Walls* walls, player player, trig mat
         int size = s[l].we - s[l].ws + 1;
         for (int k = s[l].ws; k <= s[l].we; k++) {
             walls[k].zdep = pointdep(walls[k].x1 - player.x, walls[k].x2 - player.x, walls[k].y1 - player.y, walls[k].y2 - player.y);
+=======
+    std::vector<Walls> walls;
+
+    // traverse the tree and update a vector
+    // 
+    // 
+    t.print(v, walls);
+    //for (Walls wall : walls) {
+    //    trees::printwalls(wall);
+    //}
+    //for (int sec = 0; sec < Ssize; sec++) {
+    //    s[sec].d = (s[sec].x - player.x) * (s[sec].x - player.x) + (s[sec].y - player.y) * (s[sec].y - player.y);
+    //}
+    std::cout << "tree constructed with: " << walls.size() << "ssecs" << std::endl;
+    //bubblesort(walls, player);
+    for (auto& wall : walls) {
+        float x1 = wall.p1.first - player.x;
+        float y1 = wall.p1.second - player.y;
+        float x2 = wall.p2.first - player.x;
+        float y2 = wall.p2.second - player.y;
+        // rotation using rotate matrix
+        wx[0] = x1 * pc - y1 * ps;
+        wy[0] = y1 * pc + x1 * ps;
+        /* for look think about it in terms of the player rotating as they look down
+        * so as they're looking down, the point that they were looking at gets pushed up in their vision
+        * the offset for that is the depth to the player (wy)
+        */
+        wz[0] = 0 - player.z + (player.l * wy[0] / 32); // subtract to offset basically convert z to world coords as well
+        wz[2] = 50 - player.z + (player.l * wy[0] / 32); // multiply look by wy to basically proportionally push wy further away
+        wx[1] = x2 * pc - y2 * ps;
+        wy[1] = y2 * pc + x2 * ps;
+        wz[1] = 0 - player.z + (player.l * wy[1] / 32);
+        wz[3] = 50 - player.z + (player.l * wy[1] / 32);
+
+        if (wy[0] > 0 && wy[1] > 0) {
+            points.push_back(wx[0] / (wy[0]));
+            points.push_back(wz[0] / (wy[0]));
+            points.push_back(wall.col);
+            points.push_back(wx[1] / (wy[1]));
+            points.push_back(wz[1] / (wy[1]));
+            points.push_back(wall.col);
+            points.push_back(wx[0] / (wy[0]));
+            points.push_back(wz[2] / (wy[0]));
+            points.push_back(wall.col);
+            points.push_back(wx[1] / (wy[1]));
+            points.push_back(wz[3] / (wy[1]));
+            points.push_back(wall.col);
+>>>>>>> Stashed changes
         }
         bubblesort(walls, size, s[l].ws, s[l].we);
         // placed offset point

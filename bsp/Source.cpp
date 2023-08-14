@@ -200,6 +200,20 @@ int main() {
     
     init();
     // render loop
+<<<<<<< Updated upstream
+=======
+    // 0 green 1 red 2 cyan 3 light green
+    std::vector<Walls> map;
+    map.push_back(Walls(20, 20, 60, 20, 0));
+    map.push_back(Walls(60, 20, 60, 60, 2));
+    map.push_back(Walls(60, 60, 20, 60, 1)); // rhis one is the problematic wall
+    map.push_back(Walls(20, 60, 20, 20, 3));
+
+
+    std::vector<Walls> front, back;
+
+    trees t(map);
+>>>>>>> Stashed changes
 
     while (!glfwWindowShouldClose(window)) {
         time = (int)glfwGetTime();
@@ -209,7 +223,11 @@ int main() {
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
+<<<<<<< Updated upstream
         eng.render(s, 2, walls, p, m, VAO, VBO, EBO, shaderProgram);
+=======
+        eng.render(s, 1, t, p, m, VAO, VBO, EBO, shaderProgram);
+>>>>>>> Stashed changes
 
         //std::cout << points[0] << std::endl;
         //std::cout << std::endl;
@@ -230,4 +248,32 @@ int main() {
     glDeleteProgram(shaderProgram);
     glfwTerminate();
     return 0;
+<<<<<<< Updated upstream
 }
+=======
+}
+#elif TEST == 1
+#include<iostream>
+#include<vector>
+#include "trees.h"
+
+void printcoords(){}
+
+int main() {
+
+    std::cout << __LINE__ << std::endl;
+    std::vector<Walls> map;
+    map.push_back(Walls(150, 100, 100, 100, 0));
+    //map.push_back(Walls(700, 50, 120, 50, 2));
+    map.push_back(Walls(120, 50, 150, 100, 1)); // rhis one is the problematic wall
+    map.push_back(Walls(50, 100, 140, 0, 3));
+
+    std::cout << "test: " << trees::WallComp(map[1], map[2]);
+    std::cout << "marker" << std::endl;
+    trees t(map);
+    t.printBT_();
+    return 0;
+}
+
+#endif // test
+>>>>>>> Stashed changes
