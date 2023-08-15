@@ -141,6 +141,7 @@
     <ClCompile Include="..\..\..\glad\src\glad.c" />
     <ClCompile Include="engine.cpp" />
     <ClCompile Include="Source.cpp" />
+    <ClCompile Include="trees.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="notes.txt" />
@@ -148,6 +149,7 @@
   <ItemGroup>
     <ClInclude Include="engine.h" />
     <ClInclude Include="structinc.h" />
+    <ClInclude Include="trees.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="bsp.rc" />

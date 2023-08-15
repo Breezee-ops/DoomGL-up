@@ -1,3 +1,4 @@
+#if TEST == 0
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -28,7 +29,6 @@ const int SH2 = 300;
 
 player p;
 trig m;
-Walls walls[8];
 sectors s[2];
 
 const char* vertexshadersource = "#version 330 core\n"
@@ -45,6 +45,12 @@ const char* fragmentshadersource = "#version 330 core\n"
 "out vec4 FragColor;\n"
 "void main()\n"
 "{\n"
+"if(col.z == 3) {\n"
+"   FragColor = vec4(0.5f, 1.0f, 0.5f, 1.0f);\n"
+"}\n"
+"if(col.z == 2) {\n"
+"   FragColor = vec4(0.0f, 1.0f, 1.0f, 1.0f);\n"
+"}\n"
 "if(col.z == 0) {\n"
 "   FragColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);\n"
 "}\n"
@@ -68,50 +74,50 @@ void init() {
         m.SIN[x] = sin(x / 180.0 * 3.1415);
     }
 
-    int loadSec[] = {
-        //we ws zfloor zheight x y d
-         3, 0, 0, 40, 50, 25, 0,
-         7, 4, 0, 40, 120, 30, 0
-    };
+    //int loadSec[] = {
+    //    //we ws zfloor zheight x y d
+    //     3, 0, 0, 40, 50, 25, 0,
+    //     7, 4, 0, 40, 120, 30, 0
+    //};
 
-    int loadWall[] = {
-        //x1, y1, x2, y2, col
-        30, 10, 70, 10, 0,
-        70, 10, 70, 40, 1,
-        70, 40, 30, 40, 0,
-        30, 10, 30, 40, 1,
+    //int loadWall[] = {
+    //    //x1, y1, x2, y2, col
+    //    30, 10, 70, 10, 0,
+    //    70, 10, 70, 40, 1,
+    //    70, 40, 30, 40, 0,
+    //    30, 10, 30, 40, 1,
 
-        110, 20, 130, 20, 0,
-        130, 20, 130, 40, 1,
-        130, 40, 110, 40, 0,
-        110, 40, 110, 20, 1
-    };
+    //    110, 20, 130, 20, 0,
+    //    130, 20, 130, 40, 1,
+    //    130, 40, 110, 40, 0,
+    //    110, 40, 110, 20, 1
+    //};
 
-    // load from sec array
-    int elem = 0;
-    int numsec = sizeof(loadSec) / (sizeof(int) * 7);
-    std::cout << "sec: " << numsec << std::endl;
-    for (int sec = 0; sec < numsec; sec++) {
-        s[sec].we = loadSec[elem + 0];
-        s[sec].ws = loadSec[elem + 1];
-        s[sec].zfloor = loadSec[elem + 2];
-        s[sec].zheight = loadSec[elem + 3];
-        s[sec].x = loadSec[elem + 4];
-        s[sec].y = loadSec[elem + 5];
-        s[sec].d = loadSec[elem + 6];
-        elem += 7;
-    }
-    elem = 0;
-    int numwall = sizeof(loadWall) / (sizeof(int) * 5);
-    std::cout << "wall: " << numwall << std::endl;
-    for (int wal = 0; wal < numwall; wal++) {
-        walls[wal].x1 = loadWall[elem + 0];
-        walls[wal].y1 = loadWall[elem + 1];
-        walls[wal].x2 = loadWall[elem + 2];
-        walls[wal].y2 = loadWall[elem + 3];
-        walls[wal].col = loadWall[elem + 4];
-        elem += 5;
-    }
+    //// load from sec array
+    //int elem = 0;
+    //int numsec = sizeof(loadSec) / (sizeof(int) * 7);
+    //std::cout << "sec: " << numsec << std::endl;
+    //for (int sec = 0; sec < numsec; sec++) {
+    //    s[sec].we = loadSec[elem + 0];
+    //    s[sec].ws = loadSec[elem + 1];
+    //    s[sec].zfloor = loadSec[elem + 2];
+    //    s[sec].zheight = loadSec[elem + 3];
+    //    s[sec].x = loadSec[elem + 4];
+    //    s[sec].y = loadSec[elem + 5];
+    //    s[sec].d = loadSec[elem + 6];
+    //    elem += 7;
+    //}
+    //elem = 0;
+    //int numwall = sizeof(loadWall) / (sizeof(int) * 5);
+    //std::cout << "wall: " << numwall << std::endl;
+    //for (int wal = 0; wal < numwall; wal++) {
+    //    walls[wal].x1 = loadWall[elem + 0];
+    //    walls[wal].y1 = loadWall[elem + 1];
+    //    walls[wal].x2 = loadWall[elem + 2];
+    //    walls[wal].y2 = loadWall[elem + 3];
+    //    walls[wal].col = loadWall[elem + 4];
+    //    elem += 5;
+    //}
 }
 
 int main() {
@@ -200,8 +206,6 @@ int main() {
     
     init();
     // render loop
-<<<<<<< Updated upstream
-=======
     // 0 green 1 red 2 cyan 3 light green
     std::vector<Walls> map;
     map.push_back(Walls(20, 20, 60, 20, 0));
@@ -213,7 +217,6 @@ int main() {
     std::vector<Walls> front, back;
 
     trees t(map);
->>>>>>> Stashed changes
 
     while (!glfwWindowShouldClose(window)) {
         time = (int)glfwGetTime();
@@ -222,12 +225,9 @@ int main() {
 
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
+        std::cout << "x: " << p.x << std::endl;
 
-<<<<<<< Updated upstream
-        eng.render(s, 2, walls, p, m, VAO, VBO, EBO, shaderProgram);
-=======
         eng.render(s, 1, t, p, m, VAO, VBO, EBO, shaderProgram);
->>>>>>> Stashed changes
 
         //std::cout << points[0] << std::endl;
         //std::cout << std::endl;
@@ -235,7 +235,7 @@ int main() {
         glfwPollEvents();
         tick += 1;
         if (time - curtime == 1) {
-            //std::cout << tick << std::endl;
+            std::cout << tick << std::endl;
             tick = 0;
         }
         curtime = time;
@@ -248,9 +248,6 @@ int main() {
     glDeleteProgram(shaderProgram);
     glfwTerminate();
     return 0;
-<<<<<<< Updated upstream
-}
-=======
 }
 #elif TEST == 1
 #include<iostream>
@@ -276,4 +273,3 @@ int main() {
 }
 
 #endif // test
->>>>>>> Stashed changes
