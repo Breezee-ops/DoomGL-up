@@ -1,13 +1,5 @@
 ﻿#include "trees.h"
 
-void trees::populateNormals(std::vector<Walls>& w) {
-	for (auto& wall : w) {
-		int dx = wall.p2.first - wall.p1.first;
-		int dy = wall.p2.second - wall.p1.second;
-		wall.normal = { -dy, dx };
-	}
-}
-
 inline float dot(std::pair<float, float>a, std::pair<float, float>b) {
 	return ((a.first* b.first) + (a.second * b.second));
 }
@@ -23,11 +15,7 @@ void trees::printwalls(Walls a) {
 // 0 front 1 back 2 intersection first __ second
 int trees::WallComp(Walls first, Walls second) {
 
-	//// make the first line a vector, find if the two points on the second line cross product to have signs
-	//std::pair<float, float> vec1 = { first.p1.first - first.p2.first, first.p1.second - first.p2.second };
-	//std::pair<float, float> vec21 = { first.p1.first - second.p2.first, first.p1.second - second.p2.second };
-	//std::pair<float, float> vec22 = { first.p1.first - second.p1.first, first.p1.second - second.p1.second };
-	//std::cout << "z1: " << cross_z(vec1, second.p1) << "z2: " << cross_z(vec1, second.p2) << std::endl;
+	// make the first line a vector, find if the two points on the second line cross product to have signs
 	if (cross_z(first.p1, first.p2, second.p1) >= 0 && cross_z(first.p1, first.p2, second.p2) >= 0) {
 		return 1;
 	}
@@ -128,14 +116,6 @@ trees::trees(std::vector<Walls> walls) {
 	root = rec(walls);
 }
 
-//int pointdep(int x1, int x2, int y1, int y2) {
-//	// calculates depth of middle point to player (origin)
-//	int midx = (x1 + x2) / 2;
-//	int midy = (y1 + y2) / 2;
-//
-//	return (midx * midx) + (midy * midy);
-//}
-
 void trees::traverse(trees::treenode* root, std::pair<float, float> v, std::vector<Walls>& maptree) {
 
 	// inorder
@@ -150,32 +130,18 @@ void trees::traverse(trees::treenode* root, std::pair<float, float> v, std::vect
 	// actual
 	if (root->front == nullptr && root->back == nullptr) {
 		maptree.push_back(root->ssec);
-		//std::cout << "(" << root->ssec.p1.first << "," << root->ssec.p1.second << "), (" << root->ssec.p2.first << "," << root->ssec.p2.second << ")" << std::endl;
 		return;
 	}
-	//float distf = FLT_MAX;
-	//float distb = FLT_MAX;
-	//if (root->front != nullptr) {
-	//	std::pair<float, float> mf = { (root->front->ssec.p2.first - root->front->ssec.p1.first) / 2, (root->front->ssec.p2.second - root->front->ssec.p1.second) / 2 };
-	//	distf = (mf.first - v.first) * (mf.first - v.first) + (mf.second - v.second) * (mf.second - v.second);
-	//}
-	//if (root->back != nullptr) {
-	//	std::pair<float, float> mb = { (root->back->ssec.p2.first - root->back->ssec.p1.first) / 2, (root->back->ssec.p2.second - root->back->ssec.p1.second) / 2 };
-	//	distb = (mb.first - v.first) * (mb.first - v.first) + (mb.second - v.second) * (mb.second - v.second);
-	//}
-	//int m = (root->ssec.p2.second - root->ssec.p1.second) / (root->ssec.p2.first - root->ssec.p1.first);
-	//int res1 = v.second - root->ssec.p2.second - (m * v.first) + (m * root->ssec.p2.first);
+	
 	if (cross_z(root->ssec.p1, root->ssec.p2, v) > 0) {
 		if(root->back != nullptr) traverse(root->back, v, maptree);
 		maptree.push_back(root->ssec);
-		//std::cout << "(" << root->ssec.p1.first << root->ssec.p1.second << "), (" << root->ssec.p2.first << root->ssec.p2.second << ")" << std::endl;
 		if (root->front != nullptr) traverse(root->front, v, maptree);
 	}
 
 	if (cross_z(root->ssec.p1, root->ssec.p2, v) < 0) {
 		if (root->front != nullptr) traverse(root->front, v, maptree);
 		maptree.push_back(root->ssec);
-		//std::cout << "(" << root->ssec.p1.first << root->ssec.p1.second << "), (" << root->ssec.p2.first << root->ssec.p2.second << ")" << std::endl;
 		if (root->back != nullptr) traverse(root->back, v, maptree);
 	}
 
@@ -183,7 +149,6 @@ void trees::traverse(trees::treenode* root, std::pair<float, float> v, std::vect
 
 	if (cross_z(root->ssec.p1, root->ssec.p2, v) == 0) {
 		if (root->front != nullptr) traverse(root->front, v, maptree);
-		//std::cout << "(" << root->ssec.p1.first << root->ssec.p1.second << "), (" << root->ssec.p2.first << root->ssec.p2.second << ")" << std::endl;
 		if (root->back != nullptr) traverse(root->back, v, maptree);
 	}
 }

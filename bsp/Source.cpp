@@ -73,51 +73,6 @@ void init() {
         m.COS[x] = cos(x / 180.0 * 3.1415);
         m.SIN[x] = sin(x / 180.0 * 3.1415);
     }
-
-    //int loadSec[] = {
-    //    //we ws zfloor zheight x y d
-    //     3, 0, 0, 40, 50, 25, 0,
-    //     7, 4, 0, 40, 120, 30, 0
-    //};
-
-    //int loadWall[] = {
-    //    //x1, y1, x2, y2, col
-    //    30, 10, 70, 10, 0,
-    //    70, 10, 70, 40, 1,
-    //    70, 40, 30, 40, 0,
-    //    30, 10, 30, 40, 1,
-
-    //    110, 20, 130, 20, 0,
-    //    130, 20, 130, 40, 1,
-    //    130, 40, 110, 40, 0,
-    //    110, 40, 110, 20, 1
-    //};
-
-    //// load from sec array
-    //int elem = 0;
-    //int numsec = sizeof(loadSec) / (sizeof(int) * 7);
-    //std::cout << "sec: " << numsec << std::endl;
-    //for (int sec = 0; sec < numsec; sec++) {
-    //    s[sec].we = loadSec[elem + 0];
-    //    s[sec].ws = loadSec[elem + 1];
-    //    s[sec].zfloor = loadSec[elem + 2];
-    //    s[sec].zheight = loadSec[elem + 3];
-    //    s[sec].x = loadSec[elem + 4];
-    //    s[sec].y = loadSec[elem + 5];
-    //    s[sec].d = loadSec[elem + 6];
-    //    elem += 7;
-    //}
-    //elem = 0;
-    //int numwall = sizeof(loadWall) / (sizeof(int) * 5);
-    //std::cout << "wall: " << numwall << std::endl;
-    //for (int wal = 0; wal < numwall; wal++) {
-    //    walls[wal].x1 = loadWall[elem + 0];
-    //    walls[wal].y1 = loadWall[elem + 1];
-    //    walls[wal].x2 = loadWall[elem + 2];
-    //    walls[wal].y2 = loadWall[elem + 3];
-    //    walls[wal].col = loadWall[elem + 4];
-    //    elem += 5;
-    //}
 }
 
 int main() {
@@ -208,19 +163,18 @@ int main() {
     // render loop
     // 0 green 1 red 2 cyan 3 light green
     std::vector<Walls> map;
-    map.push_back(Walls(20, 20, 60, 20, 0));
-    map.push_back(Walls(60, 20, 60, 60, 2));
-    map.push_back(Walls(60, 60, 20, 60, 1)); // rhis one is the problematic wall
-    map.push_back(Walls(20, 60, 20, 20, 3));
+    map.push_back(Walls(20, 20, 60, 20, 0, 0, 40));
+    map.push_back(Walls(60, 20, 60, 60, 2, 0, 40));
+    map.push_back(Walls(60, 60, 20, 60, 1, 0, 40)); // rhis one is the problematic wall
+    map.push_back(Walls(20, 60, 20, 20, 3, 0, 40));
 
 
     std::vector<Walls> front, back;
 
     trees t(map);
-
+    int framecount = 0;
     while (!glfwWindowShouldClose(window)) {
-        time = (int)glfwGetTime();
-        
+
         eng.keyboardHandle(p, m, window);
 
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -233,12 +187,8 @@ int main() {
         //std::cout << std::endl;
         glfwSwapBuffers(window);
         glfwPollEvents();
-        tick += 1;
-        if (time - curtime == 1) {
-            std::cout << tick << std::endl;
-            tick = 0;
-        }
-        curtime = time;
+
+        framecount++;
     }
 
     // destructor portion

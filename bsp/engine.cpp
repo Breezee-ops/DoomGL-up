@@ -98,12 +98,12 @@ void engine::render(sectors* s, int Ssize, trees t, player player, trig math, un
         * so as they're looking down, the point that they were looking at gets pushed up in their vision
         * the offset for that is the depth to the player (wy)
         */
-        wz[0] = 0 - player.z + (player.l * wy[0] / 32); // subtract to offset basically convert z to world coords as well
-        wz[2] = 50 - player.z + (player.l * wy[0] / 32); // multiply look by wy to basically proportionally push wy further away
+        wz[0] = (float)wall.floor - player.z + (player.l * wy[0] / 32); // subtract to offset basically convert z to world coords as well
+        wz[2] = (float)wall.height - player.z + (player.l * wy[0] / 32); // multiply look by wy to basically proportionally push wy further away
         wx[1] = x2 * pc - y2 * ps;
         wy[1] = y2 * pc + x2 * ps;
-        wz[1] = 0 - player.z + (player.l * wy[1] / 32);
-        wz[3] = 50 - player.z + (player.l * wy[1] / 32);
+        wz[1] = (float)wall.floor - player.z + (player.l * wy[1] / 32);
+        wz[3] = (float)wall.height - player.z + (player.l * wy[1] / 32);
 
         if (wy[0] > 0 && wy[1] > 0) {
             points.push_back(wx[0] / (wy[0]));
@@ -138,84 +138,6 @@ void engine::render(sectors* s, int Ssize, trees t, player player, trig math, un
     // TODO: place caps
 
     if (!points.empty()) descriptRender(points, indices, VAO, VBO, EBO, shaderProgram);
-
-    // chipping in
-
-
-    //for (int l = 0; l < Ssize; l++) {
-    //    int size = s[l].we - s[l].ws + 1;
-    //    for (int k = s[l].ws; k <= s[l].we; k++) {
-    //        walls[k].zdep = pointdep(walls[k].x1 - player.x, walls[k].x2 - player.x, walls[k].y1 - player.y, walls[k].y2 - player.y);
-    //    }
-    //    bubblesort(walls, size, s[l].ws, s[l].we);
-    //    // placed offset point
-    //    for (int i = s[l].ws; i <=s[l].we; i++) {
-    //        int x1 = walls[i].x1 - player.x;
-    //        int y1 = walls[i].y1 - player.y;
-    //        int x2 = walls[i].x2 - player.x;
-    //        int y2 = walls[i].y2 - player.y;
-    //        // rotation using rotate matrix
-    //        wx[0] = x1 * pc - y1 * ps;
-    //        wy[0] = y1 * pc + x1 * ps;
-    //        /* for look think about it in terms of the player rotating as they look down
-    //        * so as they're looking down, the point that they were looking at gets pushed up in their vision
-    //        * the offset for that is the depth to the player (wy)
-    //        */
-    //        wz[0] = s[l].zfloor - player.z + (player.l * wy[0]/32); // subtract to offset basically convert z to world coords as well
-    //        wz[2] = s[l].zheight - player.z + (player.l * wy[0]/32); // multiply look by wy to basically proportionally push wy further away
-    //        wx[1] = x2 * pc - y2 * ps;
-    //        wy[1] = y2 * pc + x2 * ps;
-    //        wz[1] = s[l].zfloor - player.z + (player.l * wy[1]/32);
-    //        wz[3] = s[l].zheight - player.z + (player.l * wy[1]/32);
-
-    //        // transform into screen coordinates
-    //        if (wy[0] > 0 && wy[1] > 0) {
-    //            points.push_back(wx[0] / (wy[0]));
-    //            points.push_back(wz[0] / (wy[0]));
-    //            points.push_back(walls[i].col);
-    //            points.push_back(wx[1] / (wy[1]));
-    //            points.push_back(wz[1] / (wy[1]));
-    //            points.push_back(walls[i].col);
-    //            points.push_back(wx[0] / (wy[0]));
-    //            points.push_back(wz[2] / (wy[0]));
-    //            points.push_back(walls[i].col);
-    //            points.push_back(wx[1] / (wy[1]));
-    //            points.push_back(wz[3] / (wy[1]));
-    //            points.push_back(walls[i].col);
-    //        }
-    //    }
-
-    //}
-    //int quadcount = points.size() / (3 * 4);
-    ////std::cout << points.size()<<std::endl;
-    //int base = 0;
-    //for (int j = 0; j < quadcount; j++) {
-    //    indices.push_back(0 + base);
-    //    indices.push_back(1 + base);
-    //    indices.push_back(2 + base);
-    //    indices.push_back(1 + base);
-    //    indices.push_back(2 + base);
-    //    indices.push_back(3 + base);
-    //    base += 4;
-    //}
-
-    //std::cout << quadcount << std::endl;
-    //// place caps
-
-    //if (quadcount > 1) {
-    //    int th = 0;
-    //    for (int c = 0; c < quadcount / 2; c++) {
-    //        indices.push_back(2 + th);
-    //        indices.push_back(3 + th);
-    //        indices.push_back(7 + th);
-    //        indices.push_back(2 + th);
-    //        indices.push_back(7 + th);
-    //        indices.push_back(14 + th);
-    //        th += 0;
-    //        // 6 7 11
-    //    }
-    //}
-    //if (!points.empty()) descriptRender(points, indices, VAO, VBO, EBO, shaderProgram);
 }
 
 void engine::keyboardHandle(player& p, trig m, GLFWwindow* window) {

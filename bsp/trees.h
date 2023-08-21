@@ -15,11 +15,13 @@ private:
 
 
 public:
+	/* standard bsp traversal I stole this from wikipedia, but the compariosns 
+	* are flipped so that the accumulated vector of walls
+	* from the traversal are flipped so walls can be drawn back to front
+	*/
 	void traverse(trees::treenode* root, std::pair<float, float> v, std::vector<Walls>& maptree);
-	// populate the normals per wall
-	static void populateNormals(std::vector<Walls>& w);
 
-	/*int func to compare if lines are infront or behind and if
+	/* int func to compare if lines are infront or behind and if
 	* intersection split line at the intersection and add as walls
 	* 0 front 1 back 2 intersection first __ second
 	*/
@@ -43,10 +45,13 @@ public:
 	*/
 	treenode* rec(std::vector<Walls> walls);
 
+	// helper
 	static void printwalls(Walls a);
 
 	trees(std::vector<Walls> walls);
 
+	/* helper function that calls the recursive traversal on the root
+	*/
 	void print(std::pair<float, float> v, std::vector<Walls>& maptree);
 
 	void printBT(const treenode* node);
